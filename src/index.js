@@ -11,162 +11,141 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(bodyParser.json())
 // your code goes here
-
-// custom middleware for all
-// app.use((req, res, next) =>
-// {
-//   next();
-//   })
-// app.use(bodyParser.raw())
-app.get('/', (req, res) => {
-  res.send('Hello world!')
+const oneM = 1000000
+app.get('/', (req, resp) => {
+  resp.send('Hello world!')
 })
 
-// addition api
-app.post('/add', (req, res) => {
-  const num1 = req.body.num1
-  const num2 = req.body.num2
-  console.log(req.body)
-  // console.log(typeof req.body.num2)
+function checkUnderflow(num1, num2, val) {
+  if (num1 < -oneM || num2 < -oneM || val < -oneM) {
+    return true
+  }
+  return false
+}
+function checkOverflow(num1, num2, val) {
+  if (num1 > oneM || num2 > oneM || val > oneM) {
+    return true
+  }
+  return false
+}
+function checkString(num1, num2) {
   if (typeof num1 === 'string' || typeof num2 === 'string') {
-    const data = {
-      status: 'error',
-      message: 'Invalid data types',
-    }
-    res.send(data)
+    return true
   }
-  if (num1 < -1000000 || num2 < -1000000) {
-    const data = {
-      status: 'error',
-      message: 'Underflow',
-    }
-    res.send(data)
+  return false
+}
+app.post('/add', (req, resp) => {
+  let { num1, num2 } = req.body
+  let sum = num1 + num2
+  let data = {
+    status: null,
+    message: null,
+    sum: null,
   }
-  if (num1 > 1000000 || num2 > 1000000) {
-    const data = {
-      status: 'error',
-      message: 'Overflow',
-    }
-    res.send(data)
+  if (checkUnderflow(num1, num2, sum)) {
+    data.status = 'error'
+    data.message = 'Underflow'
+    data.sum = ''
+  } else if (checkOverflow(num1, num2, sum)) {
+    data.status = 'error'
+    data.message = 'Overflow'
+    data.sum = ''
+  } else if (checkString(num1, num2)) {
+    data.status = 'error'
+    data.message = 'Invalid data types'
+    data.sum = ''
   } else {
-    const data = {
-      status: 'success',
-      message: 'the sum of given two numbers',
-      sum: num1 + num2,
-    }
-    res.send(data)
+    data.status = 'success'
+    data.message = 'the sum of given two numbers'
+    data.sum = sum
   }
+  resp.send(data)
 })
-
-// substract api
-app.post('/sub', (req, res) => {
-  const num1 = req.body.num1
-  const num2 = req.body.num2
-  const sub = num1 - num2
-  if (typeof num1 === 'string' || typeof num2 === 'string') {
-    const data = {
-      status: 'error',
-      message: 'Invalid data types',
-    }
-    res.send(data)
+app.post('/sub', (req, resp) => {
+  let { num1, num2 } = req.body
+  let sub = num1 - num2
+  let data = {
+    status: null,
+    message: null,
+    difference: null,
   }
-  if (num1 < -1000000 || num2 < -1000000) {
-    const data = {
-      status: 'error',
-      message: 'Underflow',
-    }
-    res.send(data)
-  }
-  if (num1 > 1000000 || num2 > 1000000) {
-    const data = {
-      status: 'error',
-      message: 'Overflow',
-    }
-    res.send(data)
+  if (checkUnderflow(num1, num2, sub)) {
+    data.status = 'error'
+    data.message = 'Underflow'
+    data.difference = ''
+  } else if (checkOverflow(num1, num2, sub)) {
+    data.status = 'error'
+    data.message = 'Overflow'
+    data.difference = ''
+  } else if (checkString(num1, num2)) {
+    data.status = 'error'
+    data.message = 'Invalid data types'
+    data.difference = ''
   } else {
-    const data = {
-      status: 'success',
-      message: 'the difference of given two numbers',
-      sum: num1 - num2,
-    }
-    res.send(data)
+    data.status = 'success'
+    data.message = 'the difference of given two numbers'
+    data.difference = sub
   }
+  resp.send(data)
 })
-// multiplication api
-app.post('/multiply', (req, res) => {
-  const num1 = req.body.num1
-  const num2 = req.body.num2
-
-  if (typeof num1 === 'string' || typeof num2 === 'string') {
-    const data = {
-      status: 'error',
-      message: 'Invalid data types',
-    }
-    res.send(data)
+app.post('/multiply', (req, resp) => {
+  let { num1, num2 } = req.body
+  let mul = num1 * num2
+  let data = {
+    status: null,
+    message: null,
+    result: null,
   }
-  if (num1 < -1000000 || num2 < -1000000) {
-    const data = {
-      status: 'error',
-      message: 'Underflow',
-    }
-    res.send(data)
-  }
-  if (num1 > 1000000 || num2 > 1000000) {
-    const data = {
-      status: 'error',
-      message: 'Overflow',
-    }
-    res.send(data)
+  if (checkUnderflow(num1, num2, mul)) {
+    data.status = 'error'
+    data.message = 'Underflow'
+    data.result = ''
+  } else if (checkOverflow(num1, num2, mul)) {
+    data.status = 'error'
+    data.message = 'Overflow'
+    data.result = ''
+  } else if (checkString(num1, num2)) {
+    data.status = 'error'
+    data.message = 'Invalid data types'
+    data.result = ''
   } else {
-    const data = {
-      status: 'success',
-      message: 'The product of given numbers',
-      result: num1 * num2,
-    }
-    res.send(data)
+    data.status = 'success'
+    data.message = 'The product of given numbers'
+    data.result = mul
   }
+  resp.send(data)
 })
-
-app.post('/divide', (req, res) => {
-  const num1 = req.body.num1
-  const num2 = req.body.num2
+app.post('/divide', (req, resp) => {
+  let { num1, num2 } = req.body
+  let div = num1 / num2
+  let data = {
+    status: null,
+    message: null,
+    result: null,
+  }
   if (num2 === 0) {
-    const data = {
-      status: 'error',
-      message: 'Cannot divide by zero',
-    }
-    res.send(data)
-  }
-  if (typeof num1 === 'string' || typeof num2 === 'string') {
-    const data = {
-      status: 'error',
-      message: 'Invalid data types',
-    }
-    res.send(data)
-  }
-  if (num1 < -1000000 || num2 < -1000000) {
-    const data = {
-      status: 'error',
-      message: 'Underflow',
-    }
-    res.send(data)
-  }
-  if (num1 > 1000000 || num2 > 1000000) {
-    const data = {
-      status: 'error',
-      message: 'Overflow',
-    }
-    res.send(data)
+    data.status = 'error'
+    data.message = 'Cannot divide by zero'
+    data.result = ''
+  } else if (checkUnderflow(num1, num2, div)) {
+    data.status = 'error'
+    data.message = 'Underflow'
+    data.result = ''
+  } else if (checkOverflow(num1, num2, div)) {
+    data.status = 'error'
+    data.message = 'Overflow'
+    data.result = ''
+  } else if (checkString(num1, num2)) {
+    data.status = 'error'
+    data.message = 'Invalid data types'
+    data.result = ''
   } else {
-    const data = {
-      status: 'success',
-      message: 'The division of given numbers',
-      result: num1 / num2,
-    }
-    res.send(data)
+    data.status = 'error'
+    data.message = 'The division of given numbers'
+    data.result = div
   }
+  resp.send(data)
 })
-
 app.listen(port, () => console.log(`App listening on port ${port}!`))
 
 module.exports = app
